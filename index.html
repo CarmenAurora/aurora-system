@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AURORA SYSTEM v2.3.0.3 - LOGIN</title>
+    <style>
+        /* ESTILO VISUAL (CSS) - O visual Retrô */
+        body {
+            background-color: #000000;
+            color: #00FF33; /* Verde Fósforo */
+            font-family: 'Courier New', Courier, monospace;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden; /* Impede rolagem */
+        }
+
+        /* Efeito de linhas de TV antiga (Scanlines) */
+        body::after {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            background-size: 100% 2px, 3px 100%;
+            pointer-events: none; /* Deixa clicar através do efeito */
+            z-index: 10;
+        }
+
+        .container {
+            text-align: center;
+            border: 2px solid #00FF33;
+            padding: 40px;
+            box-shadow: 0 0 20px rgba(0, 255, 51, 0.5);
+            background-color: rgba(0, 20, 0, 0.8);
+            z-index: 20;
+            max-width: 400px;
+            width: 90%;
+        }
+
+        /* Configuração da Imagem da Logo */
+        img.logo {
+            width: 150px; /* Tamanho da logo */
+            height: auto;
+            margin-bottom: 20px;
+            filter: drop-shadow(0 0 5px #00FF33); /* Brilho verde na logo */
+        }
+
+        h1 {
+            font-size: 18px;
+            margin-bottom: 30px;
+            letter-spacing: 2px;
+            border-bottom: 1px dashed #00FF33;
+            padding-bottom: 10px;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        input {
+            width: 100%;
+            background: black;
+            border: 1px solid #00FF33;
+            color: #00FF33;
+            padding: 10px;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 16px;
+            outline: none;
+            box-sizing: border-box; /* Garante que a borda não aumente o tamanho */
+        }
+
+        input:focus {
+            background-color: #002200;
+            box-shadow: 0 0 10px #00FF33;
+        }
+
+        button {
+            background-color: #00FF33;
+            color: black;
+            border: none;
+            padding: 10px 30px;
+            font-family: 'Courier New', Courier, monospace;
+            font-weight: bold;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 10px;
+            text-transform: uppercase;
+        }
+
+        button:hover {
+            background-color: #ccffcc;
+            box-shadow: 0 0 15px #00FF33;
+        }
+
+        .error-msg {
+            color: red;
+            margin-top: 15px;
+            display: none; /* Escondido por padrão */
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <img src="logo.png" alt="Aurora System Logo" class="logo">
+        
+        <h1>AURORA SYS v2.3.0.3</h1>
+
+        <div class="input-group">
+            <label>USER_ID:</label>
+            <input type="text" id="username" placeholder=">_" autocomplete="off">
+        </div>
+
+        <div class="input-group">
+            <label>PASSCODE:</label>
+            <input type="password" id="password" placeholder="******">
+        </div>
+
+        <button onclick="checkLogin()">CONNECT</button>
+        
+        <p class="error-msg" id="errorMessage">ACCESS DENIED // INCORRECT CREDENTIALS</p>
+    </div>
+
+    <script>
+        // LÓGICA DO JAVASCRIPT (Configuração das senhas)
+        
+        function checkLogin() {
+            // Pega o que o usuário digitou
+            var user = document.getElementById("username").value.toUpperCase(); // Converte para maiúsculo
+            var pass = document.getElementById("password").value.toUpperCase();
+
+            var errorMsg = document.getElementById("errorMessage");
+
+            // --- CONFIGURE AQUI O LOGIN E SENHA ---
+            // Substitua "ADMIN" e "AURORA" pelo que você quiser
+            
+            if (user === "ADMIN" && pass === "AURORA") {
+                
+                // Se acertar, redireciona para esta página:
+                window.location.href = "database.html"; 
+                
+            } else {
+                // Se errar
+                errorMsg.style.display = "block";
+                
+                // Faz a tela piscar vermelho (efeito de erro)
+                document.body.style.backgroundColor = "#330000";
+                setTimeout(() => {
+                    document.body.style.backgroundColor = "#000000";
+                }, 200);
+            }
+        }
+
+        // Permite apertar "Enter" para enviar
+        document.addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                checkLogin();
+            }
+        });
+    </script>
+
+</body>
+</html>
