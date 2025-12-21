@@ -1,1 +1,340 @@
-<h1>ACESSO CONCEDIDO</h1>
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AURORA_DB_v4.0.1</title>
+    <style>
+        :root {
+            --aurora-blue: #00FFFF;
+            --bg-deep: #000510;
+            --alert-red: #ff3333;
+            --warn-yellow: #ffff33;
+            --dim-gray: #445555;
+        }
+
+        body {
+            background-color: #000;
+            color: var(--aurora-blue);
+            font-family: 'Courier New', monospace;
+            margin: 0;
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+            transition: filter 0.2s;
+        }
+
+        /* Efeito Scanlines */
+        body::after {
+            content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(rgba(0,0,0,0) 50%, rgba(0,0,0,0.2) 50%);
+            background-size: 100% 4px; pointer-events: none; z-index: 100;
+        }
+
+        nav {
+            width: 250px; border-right: 1px solid var(--aurora-blue); padding: 20px;
+            display: flex; flex-direction: column; gap: 15px; background: rgba(0, 10, 30, 0.9);
+        }
+        .nav-item {
+            padding: 10px; border: 1px solid transparent; cursor: pointer;
+            transition: 0.3s; text-transform: uppercase; font-size: 0.9rem;
+        }
+        .nav-item:hover { border: 1px solid var(--aurora-blue); background: rgba(0, 255, 255, 0.1); }
+        .nav-item.active { background: var(--aurora-blue); color: #000; }
+
+        main { flex: 1; padding: 40px; overflow-y: auto; position: relative; }
+        .file-content { display: none; animation: fadeIn 0.5s ease-out; }
+        .file-content.active { display: block; }
+
+        h2 { border-bottom: 2px solid var(--aurora-blue); padding-bottom: 10px; }
+        h3 { margin-top: 30px; font-size: 1rem; border-bottom: 1px dashed var(--aurora-blue); width: fit-content; }
+        .log-box { background: rgba(0, 255, 255, 0.05); padding: 20px; border-left: 4px solid var(--aurora-blue); margin: 20px 0; line-height: 1.6; }
+        .lab-grid { display: grid; grid-template-columns: 1fr; gap: 10px; margin-top: 15px; }
+        .lab-item { font-size: 0.9rem; letter-spacing: 1px; padding: 5px 0; border-bottom: 1px solid rgba(0, 255, 255, 0.1); }
+        .status-online { color: var(--aurora-blue); }
+        .status-offline { color: var(--alert-red); text-shadow: 0 0 5px var(--alert-red); font-weight: bold; }
+        .status-maintenance, .status-warn { color: var(--warn-yellow); text-shadow: 0 0 5px var(--warn-yellow); font-weight: bold; }
+        .personnel-block { padding: 15px 0; border-bottom: 1px solid rgba(0, 255, 255, 0.2); }
+        .corrupted-text { color: var(--dim-gray); opacity: 0.6; filter: blur(0.4px); }
+        .restricted { color: var(--alert-red); border-color: var(--alert-red); }
+
+        .file-list-item { padding: 15px; border: 1px solid rgba(0, 255, 255, 0.2); margin-bottom: 10px; cursor: pointer; display: flex; justify-content: space-between; }
+        .file-list-item:hover { background: rgba(0, 255, 255, 0.1); border-color: var(--aurora-blue); }
+        .log-detail-view { display: none; }
+        .back-btn { margin-bottom: 20px; background: transparent; border: 1px solid var(--aurora-blue); color: var(--aurora-blue); padding: 5px 15px; cursor: pointer; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* === NOVOS ESTILOS DE POLUIÇÃO VISUAL === */
+        
+        .color-invert { filter: invert(1) !important; }
+
+        /* Elementos de Glitch que vão pipocar na tela */
+        .glitch-artifact {
+            position: fixed;
+            pointer-events: none;
+            z-index: 9000;
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            overflow: hidden;
+        }
+
+        /* Tipos de artefatos */
+        .artifact-text { color: red; font-size: 14px; white-space: nowrap; }
+        .artifact-block { background-color: red; opacity: 0.5; }
+        .artifact-image-error {
+            width: 50px; height: 50px;
+            border: 2px dashed red;
+            display: flex; justify-content: center; align-items: center;
+            color: red; font-size: 24px;
+        }
+        .artifact-image-error::after { content: "X"; }
+
+        /* Camada Final de Cobertura */
+        #chaos-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; z-index: 9999;
+            background-color: black;
+            color: red; font-weight: bold; font-size: 16px;
+            mix-blend-mode: normal;
+            overflow: hidden; 
+            display: none;
+            word-wrap: break-word;
+            opacity: 0;
+            transition: opacity 3s ease-in; /* Demora 3s para cobrir tudo */
+        }
+
+    </style>
+</head>
+<body>
+
+    <div id="chaos-overlay"></div>
+
+    <nav>
+        <div style="font-size: 0.7rem; opacity: 0.5; margin-bottom: 20px;">logged_in: DR_CARMEN_AURORA</div>
+        <div class="nav-item active" onclick="showFile('home')">OVERVIEW</div>
+        <div class="nav-item" onclick="showFile('personnel')">PERSONNEL_FILES</div>
+        <div class="nav-item" onclick="showFile('logs')">MISSION_LOGS</div>
+        <div class="nav-item restricted" onclick="showFile('restricted')">CORRUPTED_DATA</div>
+    </nav>
+
+    <main>
+        <div id="home" class="file-content active">
+            <h2>SYSTEM OVERVIEW</h2>
+            <p>Bem-vinda, Dra. Carmen Aurora. Todos os módulos da Estação de Pesquisa Aurora estão operando em 98% de eficiência.</p>
+            <div class="log-box">> Localização Atual: AUR-1<br>> Status da Equipe: 12 Ativos / 1 Pendente<br>> Próxima Sincronização: 243 dias.</div>
+            <h3>LABORATORY STATUS:</h3>
+            <div class="lab-grid">
+                <div class="lab-item">Lab-1: <span class="status-online">(Online)</span></div>
+                <div class="lab-item">Lab-2: <span class="status-online">(Online)</span></div>
+                <div class="lab-item">Lab-3: <span class="status-online">(Online)</span></div>
+                <div class="lab-item">Lab-4: <span class="status-online">(Online)</span></div>
+                <div class="lab-item">Lab-5: <span class="status-offline">(Offline)</span></div>
+                <div class="lab-item">Lab-6: <span class="status-online">(Online)</span></div>
+                <div class="lab-item">Lab-7: <span class="status-online">(Online)</span></div>
+                <div class="lab-item">Lab-8: <span class="status-maintenance">(Em Manutenção)</span></div>
+            </div>
+        </div>
+
+        <div id="personnel" class="file-content">
+            <h2>PERSONNEL FILES</h2>
+            <div class="log-box">
+                <div class="personnel-block"><strong>NOME:</strong> Carmen Aurora<br><strong>CARGO:</strong> Diretora<br><strong>STATUS:</strong> <span class="status-offline">Inativo</span></div>
+                <div class="personnel-block"><strong>NOME:</strong> Helena Miller<br><strong>CARGO:</strong> Chefe das Pesquisas da AUR-1<br><strong>STATUS:</strong> <span class="status-online">Ativo</span></div>
+                <div class="personnel-block"><strong>NOME:</strong> Samuel Michelangelo<br><strong>CARGO:</strong> Chefe do Lab-3<br><strong>STATUS:</strong> <span class="status-online">Ativo</span></div>
+                <div class="personnel-block"><strong>NOME:</strong> Sov<br><strong>CARGO:</strong> Chefe do Lab-7<br><strong>STATUS:</strong> <span class="status-online">Ativo</span></div>
+                <div class="personnel-block"><strong>NOME:</strong> Lily Lazuli<br><strong>CARGO:</strong> Chefe do Lab-4<br><strong>STATUS:</strong> <span class="status-online">Ativo</span></div>
+                <div class="personnel-block"><strong>NOME:</strong> Moona<br><strong>CARGO:</strong> Chefe do Lab-8<br><strong>STATUS:</strong> <span class="status-warn">Sem resposta</span></div>
+                <div class="personnel-block corrupted-text"><strong>NOME:</strong> [REDACTED]<br><strong>CARGO:</strong> [REDACTED]<br><strong>STATUS:</strong> NOT_FOUND</div>
+                <div class="personnel-block corrupted-text"><strong>NOME:</strong> [REDACTED]<br><strong>CARGO:</strong> [REDACTED]<br><strong>STATUS:</strong> NOT_FOUND</div>
+                <div class="personnel-block corrupted-text"><strong>NOME:</strong> [REDACTED]<br><strong>CARGO:</strong> [REDACTED]<br><strong>STATUS:</strong> NOT_FOUND</div>
+            </div>
+        </div>
+
+        <div id="logs" class="file-content">
+            <h2>MISSION LOGS DATABASE</h2>
+            <div id="log-list-container">
+                <p style="margin-bottom: 20px;">> SELECIONE UM ARQUIVO:</p>
+                <div class="file-list-item" onclick="openLog('log1')"><span>LOG_ENTRY_#892</span><span style="opacity: 0.7;">Author: H. Miller</span></div>
+                <div class="file-list-item" onclick="openLog('log2')"><span>LOG_ENTRY_#895</span><span style="opacity: 0.7;">Author: H. Miller</span></div>
+                <div class="file-list-item" onclick="openLog('log3')"><span>LOG_ENTRY_#901</span><span style="opacity: 0.7;">Author: H. Miller</span></div>
+                <div class="file-list-item" onclick="openLog('log4')"><span>LOG_ENTRY_#915</span><span style="opacity: 0.7;">Author: H. Miller</span></div>
+            </div>
+            <div id="log1" class="log-detail-view"><button class="back-btn" onclick="closeLog()">[< VOLTAR]</button><h3>REGISTRO: #892</h3><div class="log-box">Olá, Carmen. Sei que prefere que eu me refira a você pelo nome no trabalho, mas ainda é estranho. Iniciamos ontem o projeto envolvendo a Borboleta. Ela aprende rápido, rápido até demais. Quero tentar coisas diferentes com ela na próxima tentativa. Um exemplo é tentar que ela replique aquilo que elas fazem "do outro lado" mas aqui. Por exemplo, criar fogo em cima das mãos. Sobre o laboratório 5, sei que ainda aparece como Offline no sistema, é porque de fato está Offline até agora. Ainda estou aguardando a equipe da Ignis chegar para limpar aquele lugar de forma apropriada.<br><br>Sei que minhas palavras a este ponto não valem de mais nada, mas, saiba, tentarei manter a Borboleta controlada para evitar novos incidentes como os ocorridos 5 anos atrás e como o ocorrido no Lab-5. O corpo do [REDACTED] já está sendo transferido para descarte e seus parentes já receberam os e-mails, como sempre.</div></div>
+            <div id="log2" class="log-detail-view"><button class="back-btn" onclick="closeLog()">[< VOLTAR]</button><h3>REGISTRO: #895</h3><div class="log-box">Olá novamente. Apenas fazendo o relatório semanal. Esta semana em especifico não aconteceu nada digno de nota. Como está aí na Terra? Aguardarei por noticias.<br><br><span class="corrupted-text">[DADOS INCOMPLETOS]</span></div></div>
+            <div id="log3" class="log-detail-view"><button class="back-btn" onclick="closeLog()">[< VOLTAR]</button><h3>REGISTRO: #901</h3><div class="log-box">A Borboleta parece inquieta nos últimos dias. Desde que voltamos "do outro lado", para ser mais especifica. Ainda estou tentando entender o que foi aquilo que vi. Ainda escuto vozes da Borboleta durante a noite, converso com ela mesmo ela estando na contenção. Os sonhos geralmente são um tanto quanto realista, geralmente com ambientes variados. A Borboleta chama de "Sua cabeça" mas ainda não entendi direito o que ela quer dizer com isso. Já que toquei no assunto de coisas que não entendo, ainda não consegui entender a diferença desta vez e a de 5 anos atrás. Eu mantive o controle, mas, não me parece uma situação tão diferente. Ainda estou tomando cuidado para não deixar ela "tomar conta" novamente. Quanto aos ensinamentos, ainda a mesma coisa, entregando de pouco em pouco sites da internet para ela, e ela, como sempre, com um ritmo extremamente acelerado de 700 páginas por minuto.</div></div>
+            <div id="log4" class="log-detail-view"><button class="back-btn" onclick="closeLog()">[< VOLTAR]</button><h3>REGISTRO: #915</h3><div class="log-box">Supostamente, a equipe da Ignis deve chegar logo. Soube que você virá nos visitar desta vez também. Estamos aguardando ansiosos. A Borboleta também. Ela ainda tem ficado na contenção dela, mas tem um vidro resistente e, se colocar as roupas de proteção (que você nunca coloca) será seguro. Enfim, façam uma viagem segura, estamos aguardando.</div></div>
+        </div>
+
+        <div id="restricted" class="file-content">
+            <h2 class="restricted">SYSTEM_DIAGNOSTICS_TOOL</h2>
+            <div class="log-box" style="border-color: var(--dim-gray); color: var(--dim-gray);">
+                <p>AVISO: Múltiplas falhas de integridade no núcleo. Revisão dos servidores necessária.</p>
+                <p>A estrutura do banco de dados está instável. Recomenda-se varredura completa.</p>
+            </div>
+            <div id="diag-container" style="margin-top: 30px; max-width: 500px;">
+                <p id="diag-status">STATUS: AGUARDANDO COMANDO...</p>
+                <div id="progress-wrapper" style="display: none; width: 100%; height: 20px; border: 1px solid var(--aurora-blue); margin: 10px 0;">
+                    <div id="progress-fill" style="width: 0%; height: 100%; background: var(--aurora-blue);"></div>
+                </div>
+                <button id="btn-action" onclick="startDiagnostics()" 
+                        style="background: transparent; border: 1px solid var(--aurora-blue); color: var(--aurora-blue); padding: 15px 30px; cursor: pointer; font-family: 'Courier New'; font-weight: bold; transition: 0.3s;">
+                    > INICIAR DIAGNÓSTICO DE SISTEMA
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // --- LINK FINAL ---
+        const REDIRECT_URL = "google.html"; // <-- TROQUE AQUI
+
+        function showFile(fileId) {
+            const contents = document.querySelectorAll('.file-content');
+            contents.forEach(c => c.classList.remove('active'));
+            const items = document.querySelectorAll('.nav-item');
+            items.forEach(i => i.classList.remove('active'));
+            document.getElementById(fileId).classList.add('active');
+            event.currentTarget.classList.add('active');
+            if (fileId !== 'logs') closeLog();
+        }
+
+        function openLog(logId) {
+            document.getElementById('log-list-container').style.display = 'none';
+            const details = document.querySelectorAll('.log-detail-view');
+            details.forEach(d => d.style.display = 'none');
+            const target = document.getElementById(logId);
+            target.style.display = 'block';
+            target.style.animation = 'fadeIn 0.5s ease-out';
+        }
+
+        function closeLog() {
+            const details = document.querySelectorAll('.log-detail-view');
+            details.forEach(d => d.style.display = 'none');
+            const list = document.getElementById('log-list-container');
+            list.style.display = 'block';
+            list.style.animation = 'fadeIn 0.5s ease-out';
+        }
+
+        // === DIAGNÓSTICO E CAOS VISUAL ===
+        
+        let glitchInterval;
+
+        function startDiagnostics() {
+            const btn = document.getElementById('btn-action');
+            const status = document.getElementById('diag-status');
+            const wrapper = document.getElementById('progress-wrapper');
+            const fill = document.getElementById('progress-fill');
+            const body = document.body;
+
+            btn.style.display = 'none'; 
+            wrapper.style.display = 'block'; 
+            status.innerText = "STATUS: VERIFICANDO INTEGRIDADE DE ARQUIVOS...";
+
+            let width = 0;
+            
+            const interval = setInterval(() => {
+                width++;
+                fill.style.width = width + '%';
+
+                // FASE 1: POLUIÇÃO LEVE (30-60%)
+                if (width > 30 && width < 60) {
+                    status.innerText = "STATUS: ERRO DE LEITURA. ALOCANDO MEMÓRIA...";
+                    status.style.color = "yellow";
+                    // Gera um glitch ocasionalmente
+                    if (Math.random() > 0.5) spawnRandomGlitch();
+                }
+
+                // FASE 2: TRAVAMENTO (66%)
+                if (width >= 66) {
+                    clearInterval(interval);
+                    status.innerText = "ERRO FATAL: NÚCLEO DO SISTEMA COM FALHAS GRAVES DE SEGURANÇA";
+                    status.style.color = "red";
+                    fill.style.backgroundColor = "red";
+                    
+                    // Pausa dramática de 1.5s
+                    setTimeout(triggerFullChaos, 1500);
+                }
+
+                if(width === 15) status.innerText = "STATUS: ANALISANDO INTEGRIDADE DO NÚCLEO";
+                if(width === 45) status.innerText = "STATUS: PEDINDO PERMISSÃO PARA CENTRAL";
+            }, 80);
+        }
+
+        function triggerFullChaos() {
+            const body = document.body;
+            const chaosOverlay = document.getElementById('chaos-overlay');
+            const status = document.getElementById('diag-status');
+            
+            status.innerText = "CRITICAL_FAILURE_SYSTEM_COLLAPSE";
+
+            // 1. INICIA A POLUIÇÃO VISUAL INTENSA
+            // Gera glitches freneticamente a cada 5ms
+            glitchInterval = setInterval(() => {
+                spawnRandomGlitch();
+                spawnRandomGlitch(); // Mais lixo por frame
+                if (Math.random() > 0.2) body.classList.toggle('color-invert');
+            }, 5);
+
+            // 2. MOSTRA A CAMADA FINAL QUE VAI COBRIR TUDO GRADUALMENTE
+            chaosOverlay.style.display = 'block';
+            setTimeout(() => { chaosOverlay.style.opacity = '1'; }, 10);
+
+            // PREENCHE A CAMADA FINAL COM TEXTO
+            const textInterval = setInterval(() => {
+                let noise = "";
+                const chars = "ERROR_FATAL_NULL_CORRUPT_SHE_DID_IT_HELP_@@@_###_SYSTEM_DOWN";
+                for (let i = 0; i < 200; i++) noise += chars.charAt(Math.floor(Math.random() * chars.length));
+                chaosOverlay.innerText = noise + chaosOverlay.innerText.substring(0, 2000);
+            }, 100);
+
+
+            // 3. APÓS 4 SEGUNDOS: BLACKOUT TOTAL
+            setTimeout(() => {
+                clearInterval(glitchInterval);
+                clearInterval(textInterval);
+                
+                // Apaga TUDO
+                document.body.innerHTML = ''; 
+                document.body.style.backgroundColor = 'black';
+                document.body.style.cursor = 'none';
+                document.body.className = ''; 
+
+                // 4. APÓS 3 SEGUNDOS DE TELA PRETA: REDIRECIONA
+                setTimeout(() => {
+                    window.location.href = REDIRECT_URL;
+                }, 5000);
+
+            }, 8000); // Tempo do caos
+        }
+
+        // Função auxiliar para gerar lixo visual
+        function spawnRandomGlitch() {
+            const el = document.createElement('div');
+            el.className = 'glitch-artifact';
+            
+            // Posição aleatória na tela
+            el.style.top = Math.random() * 100 + 'vh';
+            el.style.left = Math.random() * 100 + 'vw';
+            
+            // Tipo aleatório de glitch
+            const type = Math.random();
+            if (type < 0.5) {
+                el.className += ' artifact-text';
+                el.innerText = 'ERR_0x' + Math.floor(Math.random()*999);
+            } else if (type < 0.8) {
+                el.className += ' artifact-block';
+                el.style.width = (Math.random() * 100 + 20) + 'px';
+                el.style.height = (Math.random() * 50 + 10) + 'px';
+            } else {
+                el.className += ' artifact-image-error';
+            }
+
+            document.body.appendChild(el);
+            
+            // Remove o glitch depois de um tempo para não travar o navegador do usuário
+            setTimeout(() => el.remove(), Math.random() * 1000 + 500);
+        }
+    </script>
+</body>
+</html>
