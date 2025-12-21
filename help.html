@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SYSTEM_FAILURE_0x99</title>
+    <style>
+        body {
+            background-color: #000;
+            color: #ff0000;
+            font-family: 'Courier New', Courier, monospace;
+            overflow: hidden;
+            margin: 0;
+            padding: 20px;
+            font-size: 14px;
+            user-select: none; /* Impede seleção durante a animação */
+        }
+
+        /* Efeito Scanlines (mantido) */
+        .scanlines {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0) 50%, rgba(255,0,0,0.1) 50%, rgba(255,0,0,0.1));
+            background-size: 100% 4px;
+            pointer-events: none; z-index: 10;
+        }
+
+        /* Fundo de Caos (mantido) */
+        #background-noise {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 1; opacity: 0.2; word-wrap: break-word; overflow: hidden;
+            pointer-events: none;
+        }
+
+        /* === FASE 1: O TERMINAL DE HACKING === */
+        #hacking-terminal {
+            position: absolute;
+            top: 50%; left: 50%; transform: translate(-50%, -50%);
+            width: 80%; max-width: 500px;
+            z-index: 20;
+            text-align: left;
+        }
+
+        .log-entry {
+            margin-bottom: 5px;
+            font-size: 1.1rem;
+            opacity: 0; /* Começa invisível para aparecer um por um */
+            animation: fadeInLog 0.1s forwards;
+            text-shadow: 0 0 5px red;
+        }
+
+        /* === FASE 2: A CAIXA DE SEGREDO (ESTÁTICA) === */
+        .secret-container {
+            display: none; /* Escondido no começo */
+            position: absolute;
+            top: 50%; left: 50%; transform: translate(-50%, -50%);
+            z-index: 30;
+            background-color: rgba(0, 0, 0, 0.95);
+            border: 2px solid #ff0000;
+            padding: 30px;
+            text-align: left;
+            box-shadow: 0 0 30px #ff0000; /* Brilho vermelho intenso */
+            width: 80%; max-width: 400px;
+            user-select: text; /* Permite copiar a senha agora */
+        }
+
+        /* Efeito de aparecer a caixa final */
+        .fade-in-box {
+            animation: appearBox 0.5s ease-out forwards;
+        }
+
+        h2 {
+            margin: 0 0 10px 0;
+            text-transform: uppercase;
+            border-bottom: 1px solid red;
+            font-size: 1.2rem;
+        }
+
+        .data-row { margin: 15px 0; font-weight: bold; font-size: 1.2rem; }
+        .label { opacity: 0.7; font-size: 0.8rem; }
+        .value { letter-spacing: 2px; background: #330000; padding: 2px 8px; color: #fff; }
+
+        /* Animações */
+        @keyframes fadeInLog { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes appearBox { from { opacity: 0; transform: translate(-50%, -40%); } to { opacity: 1; transform: translate(-50%, -50%); } }
+        @keyframes flicker { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
+
+        .glitch-word {
+            position: absolute; color: #550000; font-weight: bold; font-size: 2rem;
+            opacity: 0.5; animation: flicker 0.1s infinite; pointer-events: none;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="scanlines"></div>
+    <div id="background-noise"></div>
+
+    <div id="hacking-terminal"></div>
+
+    <div class="secret-container" id="final-box">
+        <h2 style="animation: flicker 2s infinite;">DATA_RECOVERED</h2>
+        <p style="font-size: 0.8rem; margin-bottom: 20px;">> DECRYPTION COMPLETE.<br>> CREDENTIALS EXPOSED:</p>
+        
+        <div class="data-row">
+            <span class="label">USER_ID:</span><br>
+            <span class="value">230323</span>
+        </div>
+
+        <div class="data-row">
+            <span class="label">PASSCODE:</span><br>
+            <span class="value">Aurea230344</span>
+        </div>
+
+        <p style="margin-top: 20px; font-size: 0.7rem; text-align: center; color: #ff5555;">-- CONNECTION WILL BE TERMINATED --</p>
+    </div>
+
+    <script>
+        // === 1. EFEITOS DE FUNDO (CAOS) ===
+        const noiseContainer = document.getElementById('background-noise');
+        const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%&*ERROR_FAILURE_CORRUPT";
+        
+        function generateNoise() {
+            let text = "";
+            for(let i = 0; i < 3000; i++) {
+                text += chars.charAt(Math.floor(Math.random() * chars.length));
+                if (i % 50 === 0) text += " ";
+            }
+            noiseContainer.innerText = text;
+        }
+
+        function spawnGlitches() {
+            if(document.getElementById('final-box').style.display === 'block') return; // Para os glitches grandes no final
+            const words = ["FATAL", "SEARCHING", "...", "NULL", "0x00"];
+            const el = document.createElement('div');
+            el.className = 'glitch-word';
+            el.innerText = words[Math.floor(Math.random() * words.length)];
+            el.style.top = Math.random() * 100 + "%";
+            el.style.left = Math.random() * 100 + "%";
+            document.body.appendChild(el);
+            setTimeout(() => { el.remove(); }, 300);
+        }
+
+        setInterval(generateNoise, 100);
+        setInterval(spawnGlitches, 400);
+
+        // === 2. SEQUÊNCIA DE HACKING (10 SEGUNDOS) ===
+        const terminal = document.getElementById('hacking-terminal');
+        const finalBox = document.getElementById('final-box');
+
+        // Lista de mensagens que vão aparecer
+        const logs = [
+            "> INITIATING BRUTE FORCE...",
+            "> BYPASSING FIREWALL (PORT 8080)...",
+            "> ACCESSING MEMORY DUMP...",
+            "> SEARCHING FOR PATTERN 'USER_ID'...",
+            "> ERROR: SECTOR 7 CORRUPTED.",
+            "> RETRYING...",
+            "> PATTERN FOUND AT 0x992FA...",
+            "> DECRYPTING HASH...",
+            "> DECRYPTING HASH...",
+            "> DECRYPTING HASH...",
+            "> SUCCESS. MATCH FOUND."
+        ];
+
+        let logIndex = 0;
+        // Calcula o tempo para cada linha para dar 10 segundos no total
+        // 10000ms dividido pelo número de linhas, menos um tempinho pro final
+        const speed = 9000 / logs.length; 
+
+        function runHackingSequence() {
+            if (logIndex < logs.length) {
+                // Adiciona linha de log
+                const p = document.createElement('div');
+                p.className = 'log-entry';
+                p.innerText = logs[logIndex];
+                terminal.appendChild(p);
+                logIndex++;
+                
+                // Rola para baixo se encher
+                window.scrollTo(0, document.body.scrollHeight);
+
+                // Toca som de glitch aleatório no texto (opcional visualmente já funciona)
+                setTimeout(runHackingSequence, speed);
+            } else {
+                // FIM DA SEQUENCIA -> MOSTRAR CAIXA
+                setTimeout(revealSecrets, 1000);
+            }
+        }
+
+        function revealSecrets() {
+            terminal.style.display = 'none'; // Some os logs
+            finalBox.style.display = 'block'; // Aparece a caixa
+            finalBox.classList.add('fade-in-box'); // Animação de entrada suave
+        }
+
+        // Começa tudo
+        runHackingSequence();
+
+    </script>
+</body>
+</html>
