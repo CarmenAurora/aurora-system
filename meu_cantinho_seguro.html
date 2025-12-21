@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>TERMINAL_LOG_0703XX</title>
+    <style>
+        body {
+            background-color: #000000;
+            color: #FF0000; /* Vermelho puro */
+            font-family: 'Consolas', 'Courier New', monospace;
+            padding: 20px;
+            line-height: 1.5;
+            margin: 0;
+        }
+
+        .terminal-window {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .header {
+            border-bottom: 1px solid #FF0000;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .log-entry {
+            margin-bottom: 5px;
+            white-space: pre-wrap;
+        }
+
+        .timestamp {
+            margin-right: 10px;
+        }
+
+        .user-id {
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        a {
+            color: #FF0000;
+            text-decoration: underline;
+            font-weight: bold;
+        }
+
+        a:hover {
+            background-color: #FF0000;
+            color: #000000;
+        }
+
+        /* Cursor piscando no final para parecer terminal ativo */
+        .cursor {
+            display: inline-block;
+            width: 10px;
+            height: 18px;
+            background-color: #FF0000;
+            animation: blink 1s infinite;
+            vertical-align: middle;
+        }
+
+        @keyframes blink {
+            0% { opacity: 1; }
+            50% { opacity: 0; }
+            100% { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="terminal-window">
+    <div class="header">
+        AURORA SYSTEM - PRIVATE INNER LAB LOG [RECOVERY_MODE]<br>
+        DATE: 07.03.28
+    </div>
+
+    <div class="log-entry"><span class="timestamp">00:33</span> <span class="user-id">[230344]</span> Ei, você tá acordada?</div>
+    <div class="log-entry"><span class="timestamp">00:47</span> <span class="user-id">[230323]</span> Estou sim. Trabalhando. Precisa de algo? </div>
+    <div class="log-entry"><span class="timestamp">00:48</span> <span class="user-id">[230344]</span> Eu só não queria ficar sozinha com a minha cabeça agora.</div>
+    <div class="log-entry"><span class="timestamp">00:50</span> <span class="user-id">[230323]</span> O pesadelo recorrente? Aquele do corredor sem fim?</div>
+    <div class="log-entry"><span class="timestamp">00:50</span> <span class="user-id">[230344]</span> Sim. Mas dessa vez a luz não acendia no final. Eu tentava correr, mas o escuro parecia... líquido. Pesado. Eu tenho medo de fechar os olhos e voltar pra lá de novo.</div>
+    <div class="log-entry"><span class="timestamp">00:53</span> <span class="user-id">[230323]</span> Helena, estatisticamente você está no lugar mais seguro da estação. As trancas são biométricas. Nada entra aí.</div>
+    <div class="log-entry"><span class="timestamp">00:53</span> <span class="user-id">[230344]</span> O problema não é o que entra. É o que já está aqui dentro. Você... você poderia vir até aqui? Só por cinco minutos?</div>
+    <div class="log-entry"><span class="timestamp">00:55</span> <span class="user-id">[230323]</span> ...Eu queria. De verdade. Mas agora não da.</div>
+    <div class="log-entry"><span class="timestamp">00:55</span> <span class="user-id">[230344]</span> Tudo bem. Eu entendo. O trabalho é importante. Desculpe incomodar.</div>
+    <div class="log-entry"><span class="timestamp">00:57</span> <span class="user-id">[230323]</span> Não, espere. Eu não sou boa com essas coisas de... conforto. Mas eu não quero que você fique no escuro. Ei, tenho uma ideia.</div>
+    <div class="log-entry"><span class="timestamp">00:57</span> <span class="user-id">[230344]</span> Uma ideia?</div>
+    <div class="log-entry"><span class="timestamp">00:58</span> <span class="user-id">[230323]</span> Eu criei uma coisa. Nos intervalos. É um lugar de comunicação isolado, fora do sistema.</div>
+    <div class="log-entry"><span class="timestamp">00:58</span> <span class="user-id">[230344]</span> Por que criou isso?</div>
+    <div class="log-entry"><span class="timestamp">00:59</span> <span class="user-id">[230323]</span> No inicio, para guardar coisas minhas sem que o Erik pudesse ver. Está meio vazio lá, tem apenas uma história.</div>
+    <div class="log-entry"><span class="timestamp">00:59</span> <span class="user-id">[230344]</span> Uma história?</div>
+    <div class="log-entry"><span class="timestamp">01:00</span> <span class="user-id">[230323]</span> Sim. Eu geralmente conto ela para minha filha quando volto para Nova York nas férias. Apenas entre aqui. Pode ser nosso cantinho seguro da tempestade. <a href="https://discord.gg/BhSwKb5gxB" target="_blank">https://discord.gg/BhSwKb5gxB</a></div>
+
+    <br>
+    <div class="log-entry">CONNECTION_CLOSED...<span class="cursor"></span></div>
+</div>
+
+</body>
+</html>
