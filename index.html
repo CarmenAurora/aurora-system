@@ -5,10 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AURORA SYSTEM v2.3.0.3 - LOGIN</title>
     <style>
-        /* ESTILO VISUAL (CSS) - O visual Retrô */
+        /* === ESTILO VISUAL (CSS) - TEMA AZUL AURORA === */
+        :root {
+            --primary-blue: #00FFFF;
+            --dark-blue: #000033;
+            --hover-blue: #ccffff;
+            --intruder-red: #ff0000;
+        }
+
         body {
             background-color: #000000;
-            color: #00FF33; /* Verde Fósforo */
+            color: var(--primary-blue);
             font-family: 'Courier New', Courier, monospace;
             display: flex;
             flex-direction: column;
@@ -16,111 +23,174 @@
             justify-content: center;
             height: 100vh;
             margin: 0;
-            overflow: hidden; /* Impede rolagem */
+            overflow: hidden;
         }
 
-        /* Efeito de linhas de TV antiga (Scanlines) */
         body::after {
             content: "";
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
-            background-size: 100% 2px, 3px 100%;
-            pointer-events: none; /* Deixa clicar através do efeito */
+            background: linear-gradient(rgba(0, 0, 20, 0) 50%, rgba(0, 0, 0, 0.4) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
+            background-size: 100% 3px, 3px 100%;
+            pointer-events: none;
             z-index: 10;
         }
 
         .container {
             text-align: center;
-            border: 2px solid #00FF33;
+            border: 2px solid var(--primary-blue);
             padding: 40px;
-            box-shadow: 0 0 20px rgba(0, 255, 51, 0.5);
-            background-color: rgba(0, 20, 0, 0.8);
+            box-shadow: 0 0 25px rgba(0, 255, 255, 0.3);
+            background-color: rgba(0, 0, 20, 0.9);
             z-index: 20;
             max-width: 400px;
             width: 90%;
+            transition: opacity 0.5s ease-in-out;
         }
 
-        /* Configuração da Imagem da Logo */
         img.logo {
-            width: 150px; /* Tamanho da logo */
+            width: 150px;
             height: auto;
             margin-bottom: 20px;
-            filter: drop-shadow(0 0 5px #00FF33); /* Brilho verde na logo */
+            filter: drop-shadow(0 0 8px var(--primary-blue)); 
         }
 
         h1 {
             font-size: 18px;
             margin-bottom: 30px;
-            letter-spacing: 2px;
-            border-bottom: 1px dashed #00FF33;
+            letter-spacing: 3px;
+            border-bottom: 1px dashed var(--primary-blue);
             padding-bottom: 10px;
         }
 
-        .input-group {
-            margin-bottom: 20px;
-            text-align: left;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-        }
+        .input-group { margin-bottom: 20px; text-align: left; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; letter-spacing: 1px; }
 
         input {
             width: 100%;
-            background: black;
-            border: 1px solid #00FF33;
-            color: #00FF33;
+            background: #000510;
+            border: 1px solid var(--primary-blue);
+            color: var(--primary-blue);
             padding: 10px;
             font-family: 'Courier New', Courier, monospace;
             font-size: 16px;
             outline: none;
-            box-sizing: border-box; /* Garante que a borda não aumente o tamanho */
+            box-sizing: border-box;
+            text-shadow: 0 0 5px var(--primary-blue);
         }
 
         input:focus {
-            background-color: #002200;
-            box-shadow: 0 0 10px #00FF33;
+            background-color: var(--dark-blue);
+            box-shadow: 0 0 15px var(--primary-blue);
         }
 
         button {
-            background-color: #00FF33;
-            color: black;
+            background-color: var(--primary-blue);
+            color: #000;
             border: none;
-            padding: 10px 30px;
+            padding: 12px 30px;
             font-family: 'Courier New', Courier, monospace;
-            font-weight: bold;
+            font-weight: 900;
             font-size: 16px;
             cursor: pointer;
             margin-top: 10px;
             text-transform: uppercase;
+            letter-spacing: 2px;
+            transition: 0.3s;
         }
 
         button:hover {
-            background-color: #ccffcc;
-            box-shadow: 0 0 15px #00FF33;
+            background-color: var(--hover-blue);
+            box-shadow: 0 0 25px var(--primary-blue);
         }
 
         .error-msg {
-            color: red;
-            margin-top: 15px;
-            display: none; /* Escondido por padrão */
+            color: #ff3333;
+            margin-top: 20px;
+            display: none;
             font-weight: bold;
+            text-shadow: 0 0 10px #ff0000;
         }
+
+        #success-screen {
+            display: none;
+            text-align: center;
+            z-index: 30;
+            animation: fadeIn 1s ease-in-out;
+        }
+
+        .access-granted {
+            font-size: 3rem;
+            color: var(--primary-blue);
+            text-shadow: 0 0 20px var(--primary-blue);
+            margin-bottom: 20px;
+            animation: blinkSuccess 0.8s infinite alternate;
+        }
+
+        .welcome-msg { font-size: 1.5rem; letter-spacing: 2px; }
+
+        /* === CAIXA DO INTRUSO === */
+        #intruder-box {
+            display: none;
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 280px;
+            background-color: rgba(0, 0, 0, 0.95);
+            border: 1px solid var(--intruder-red);
+            padding: 15px;
+            color: var(--intruder-red);
+            font-family: 'Courier New', monospace;
+            z-index: 1000;
+            box-shadow: 0 0 15px var(--intruder-red);
+            animation: glitchBox 0.3s infinite alternate;
+        }
+
+        .intruder-text {
+            font-size: 14px;
+            margin-bottom: 15px;
+            text-shadow: 1px 1px 0 #330000;
+        }
+
+        .intruder-btn-group {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .intruder-btn {
+            background: transparent;
+            border: 1px solid var(--intruder-red);
+            color: var(--intruder-red);
+            padding: 5px 15px;
+            cursor: pointer;
+            font-size: 12px;
+            text-transform: uppercase;
+        }
+
+        .intruder-btn:hover {
+            background: var(--intruder-red);
+            color: black;
+        }
+
+        @keyframes blinkSuccess { from { opacity: 1; } to { opacity: 0.6; } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes glitchBox { 
+            0% { transform: translate(0,0); } 
+            100% { transform: translate(-1px, 1px); } 
+        }
+
     </style>
 </head>
 <body>
 
-    <div class="container">
+    <div class="container" id="login-container">
         <img src="logo.png" alt="Aurora System Logo" class="logo">
         
         <h1>AURORA SYS v2.3.0.3</h1>
 
         <div class="input-group">
             <label>USER_ID:</label>
-            <input type="text" id="username" placeholder=">_" autocomplete="off">
+            <input type="text" id="username" placeholder=">_" autocomplete="off" autofocus>
         </div>
 
         <div class="input-group">
@@ -133,41 +203,81 @@
         <p class="error-msg" id="errorMessage">ACCESS DENIED // INCORRECT CREDENTIALS</p>
     </div>
 
+    <div id="success-screen">
+        <h2 class="access-granted">ACCESS GRANTED</h2>
+        <p class="welcome-msg">WELCOME BACK, DOCTOR CARMEN.</p>
+        <p style="margin-top: 30px; font-size: 0.8rem;">Redirecting to secure database...</p>
+    </div>
+
+    <div id="intruder-box">
+        <div class="intruder-text" id="intruder-msg">Logins e senhas são um saco. Quer ajuda?</div>
+        <div class="intruder-btn-group" id="intruder-buttons">
+            <button class="intruder-btn" onclick="intruderYes()">Sim</button>
+            <button class="intruder-btn" id="btn-no" onclick="intruderNo()">Não</button>
+        </div>
+    </div>
+
     <script>
-        // LÓGICA DO JAVASCRIPT (Configuração das senhas)
-        
+        let failedAttempts = 0;
+
         function checkLogin() {
-            // Pega o que o usuário digitou
-            var user = document.getElementById("username").value.toUpperCase(); // Converte para maiúsculo
-            var pass = document.getElementById("password").value.toUpperCase();
+            var user = document.getElementById("username").value.toUpperCase();
+            var pass = document.getElementById("password").value; 
 
             var errorMsg = document.getElementById("errorMessage");
+            var loginContainer = document.getElementById("login-container");
+            var successScreen = document.getElementById("success-screen");
+            var intruderBox = document.getElementById("intruder-box");
 
-            // --- CONFIGURE AQUI O LOGIN E SENHA ---
-            // Substitua "ADMIN" e "AURORA" pelo que você quiser
-            
-            if (user === "ADMIN" && pass === "AURORA") {
-                
-                // Se acertar, redireciona para esta página:
-                window.location.href = "database.html"; 
-                
+            // --- SUAS CREDENCIAIS ---
+            const CORRECT_USER = "230323";
+            const CORRECT_PASS = "Aurea230344";
+
+            if (user === CORRECT_USER && pass === CORRECT_PASS) {
+                // SUCESSO
+                loginContainer.style.display = "none";
+                intruderBox.style.display = "none"; 
+                successScreen.style.display = "block";
+
+                setTimeout(() => {
+                    window.location.href = "database.html"; 
+                }, 4000); 
+
             } else {
-                // Se errar
+                // ERRO
                 errorMsg.style.display = "block";
-                
-                // Faz a tela piscar vermelho (efeito de erro)
+                failedAttempts++; 
+
                 document.body.style.backgroundColor = "#330000";
                 setTimeout(() => {
                     document.body.style.backgroundColor = "#000000";
                 }, 200);
+
+                if (failedAttempts === 3) {
+                    intruderBox.style.display = "block";
+                }
             }
         }
 
-        // Permite apertar "Enter" para enviar
+        function intruderNo() {
+            var msg = document.getElementById("intruder-msg");
+            var btnNo = document.getElementById("btn-no");
+            msg.innerText = "Arrogante";
+            btnNo.style.display = "none";
+            document.getElementById("intruder-buttons").style.justifyContent = "center";
+        }
+
+        // === ALTERAÇÃO: ABRIR EM NOVA ABA NORMAL ===
+        function intruderYes() {
+            // "_blank" abre em nova aba
+            window.open("help.html", "_blank");
+            
+            // Opcional: Fecha a caixa do intruso
+            document.getElementById("intruder-box").style.display = "none";
+        }
+
         document.addEventListener('keypress', function (e) {
-            if (e.key === 'Enter') {
-                checkLogin();
-            }
+            if (e.key === 'Enter') checkLogin();
         });
     </script>
 
