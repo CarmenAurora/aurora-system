@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Google</title>
+    <style>
+        body {
+            background-color: #202124;
+            color: #e8eaed;
+            font-family: arial, sans-serif;
+            margin: 0;
+            overflow-x: hidden; 
+            scroll-behavior: smooth; /* Rolagem suave nativa */
+        }
+
+        /* === TELA 1: HOME === */
+        #home-screen {
+            display: flex; flex-direction: column; height: 100vh;
+        }
+
+        header {
+            display: flex; justify-content: flex-end; padding: 15px 30px; align-items: center; font-size: 13px;
+        }
+        header a { color: #e8eaed; text-decoration: none; margin-left: 15px; }
+        .avatar {
+            background-color: #8ab4f8; width: 32px; height: 32px; border-radius: 50%;
+            margin-left: 20px; display: flex; justify-content: center; align-items: center;
+            font-weight: bold; color: #202124;
+        }
+
+        .main-home { display: flex; flex-direction: column; align-items: center; margin-top: 100px; flex-grow: 1; }
+        .logo { font-size: 90px; font-weight: bold; letter-spacing: -3px; margin-bottom: 30px; user-select: none; }
+        .logo-small { font-size: 24px; font-weight: bold; letter-spacing: -1px; text-decoration: none; user-select: none; }
+        .g-blue { color: #8ab4f8; } .g-red { color: #ea4335; } .g-yellow { color: #fbbc04; } .g-green { color: #34a853; }
+
+        .search-container {
+            background: #303134; border: 1px solid #5f6368; border-radius: 24px;
+            display: flex; align-items: center; width: 100%; max-width: 584px; height: 46px; padding: 0 15px;
+        }
+        .search-icon { fill: #9aa0a6; width: 20px; margin-right: 15px; }
+        
+        input {
+            background-color: transparent; border: none; font-size: 16px; width: 100%; outline: none;
+            color: #ea4335; /* Texto Vermelho */
+        }
+
+        .buttons { margin-top: 30px; }
+        button {
+            background-color: #303134; border: 1px solid #303134; border-radius: 4px; color: #e8eaed;
+            margin: 0 4px; padding: 0 16px; height: 36px; cursor: pointer;
+        }
+        footer { background-color: #171717; color: #9aa0a6; padding: 15px 30px; font-size: 14px; margin-top: auto; }
+
+        /* === TELA 2: RESULTADOS === */
+        #results-screen {
+            display: none; flex-direction: column; min-height: 100vh;
+        }
+
+        .results-header {
+            background-color: #202124; border-bottom: 1px solid #3c4043; padding: 20px 30px;
+            display: flex; align-items: center; position: sticky; top: 0; z-index: 100;
+        }
+        .results-bar-container {
+            background: #303134; border-radius: 24px; display: flex; align-items: center;
+            width: 600px; height: 44px; padding: 0 15px; margin-left: 40px;
+        }
+        .results-list { padding: 0 180px; margin-top: 20px; max-width: 650px; }
+        
+        .result-item { margin-bottom: 30px; opacity: 0.7; } /* Opacidade baixa para destacar o último */
+        .result-url { font-size: 14px; color: #9aa0a6; margin-bottom: 5px; }
+        .result-title { font-size: 20px; color: #8ab4f8; text-decoration: none; display: block; }
+        .result-desc { color: #bdc1c6; font-size: 14px; line-height: 1.58; margin-top: 3px; }
+
+        /* O LINK ESPECIAL */
+        .happy-place-link {
+            display: block; margin-top: 60px; margin-bottom: 150px;
+            font-size: 22px; color: #ea4335 !important; font-weight: bold;
+            text-align: center; cursor: pointer; border: 1px solid #ea4335;
+            padding: 15px; border-radius: 8px; width: fit-content;
+            box-shadow: 0 0 10px rgba(255, 0, 0, 0.2);
+        }
+
+        /* === MOUSE FANTASMA === */
+        #fake-cursor {
+            position: fixed; top: 100px; left: 100px; width: 20px;
+            pointer-events: none; z-index: 9999; display: none;
+            transition: all 1.5s ease-in-out; /* Movimento fluido */
+            filter: drop-shadow(0 0 2px black);
+        }
+
+    </style>
+</head>
+<body>
+
+    <svg id="fake-cursor" viewBox="0 0 24 24" fill="white" stroke="black" stroke-width="1">
+        <path d="M5.5 3.21V20.8c0 .45.54.67.85.35l4.86-4.86a.5.5 0 0 1 .35-.15h6.87a.5.5 0 0 0 .35-.85L6.35 2.85a.5.5 0 0 0-.85.36z"/>
+    </svg>
+
+    <div id="home-screen">
+        <header>
+            <a href="#">Gmail</a><a href="#">Imagens</a><div class="avatar">?</div>
+        </header>
+        <div class="main-home">
+            <div class="logo"><span class="g-blue">G</span><span class="g-red">o</span><span class="g-yellow">o</span><span class="g-blue">g</span><span class="g-green">l</span><span class="g-red">e</span></div>
+            <div class="search-container" id="search-box">
+                <svg class="search-icon" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.77 0 3.44-.7 4.7-1.87l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"></path></svg>
+                <input type="text" id="search-input" autocomplete="off" readonly>
+            </div>
+            <div class="buttons"><button>Pesquisa Google</button><button>Estou com sorte</button></div>
+        </div>
+        <footer><div style="padding: 15px;">Brasil</div></footer>
+    </div>
+
+    <div id="results-screen">
+        <div class="results-header">
+            <div class="logo-small"><span class="g-blue">G</span><span class="g-red">o</span><span class="g-yellow">o</span><span class="g-blue">g</span><span class="g-green">l</span><span class="g-red">e</span></div>
+            <div class="results-bar-container">
+                <input type="text" id="results-input" value="" readonly style="color: #ea4335;">
+            </div>
+            <div class="avatar" style="margin-left: auto;">?</div>
+        </div>
+
+        <div class="results-list" id="results-container">
+            <p style="color: #9aa0a6; font-size: 14px; margin-bottom: 20px;">Cerca de 0 resultados (0,66 segundos)</p>
+            
+            <div class="result-item">
+                <a id="target-link" class="happy-place-link">Um Lugar Feliz</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- CONFIGURAÇÃO ---
+        const message = "Vocês precisam chegar ao núcleo. Vocês precisam acordar. Estarei olhando por vocês.";
+        const typingSpeed = 100; 
+        const initialDelay = 20000; // 20 SEGUNDOS
+        
+        // --- LINK FINAL ---
+        const REDIRECT_URL = "está_chovendo.html"; 
+
+        const inputHome = document.getElementById('search-input');
+        const inputResults = document.getElementById('results-input');
+        const homeScreen = document.getElementById('home-screen');
+        const resultsScreen = document.getElementById('results-screen');
+        const cursor = document.getElementById('fake-cursor');
+
+        // Previne interação do usuário
+        document.addEventListener('keydown', (e) => e.preventDefault());
+        document.addEventListener('click', (e) => e.preventDefault());
+
+        // 1. GERAÇÃO DE RESULTADOS FALSOS (FILLER)
+        window.onload = () => {
+            generateFillerResults();
+            
+            setTimeout(() => {
+                inputHome.focus();
+                typeWriter(message, 0);
+            }, initialDelay);
+        };
+
+        function generateFillerResults() {
+            const container = document.getElementById('results-container');
+            const target = document.querySelector('.result-item:last-child'); // O botão do lugar feliz
+            
+            // Textos aleatórios para encher linguiça
+            const titles = ["WAKE UP", "WAKE UP", "WAKE UP", "WAKE UP", "WAKE UP", "WAKE UP", "WAKE UP", "WAKE UP"];
+            const descs = ["WAKE UP WAKE UP WAKE UP WAKE UP WAKE UP WAKE UP", "WAKE UP  WAKE UP WAKE UP WAKE UP WAKE UP WAKE UP WAKE UP WAKE UP", "WAKE UP WAKE UP WAKE UP WAKE UP WAKE UP WAKE UP WAKE UP WAKE UP", "WAKE UP WAKE UP WAKE UP WAKE UP WAKE UP ", "WAKE UP WAKE UP WAKE UP WAKE UP WAKE UP "];
+
+            for (let i = 0; i < 35; i++) {
+                const div = document.createElement('div');
+                div.className = 'result-item';
+                
+                const randTitle = titles[Math.floor(Math.random() * titles.length)];
+                const randDesc = descs[Math.floor(Math.random() * descs.length)];
+                
+                div.innerHTML = `
+                    <div class="result-url">www.error-log-${i}.net › system</div>
+                    <a href="#" class="result-title">${randTitle} (${i})</a>
+                    <div class="result-desc">${randDesc}</div>
+                `;
+                
+                // Insere ANTES do link final
+                container.insertBefore(div, target); 
+            }
+        }
+
+        // 2. DIGITAÇÃO
+        function typeWriter(text, i) {
+            if (i < text.length) {
+                inputHome.value += text.charAt(i);
+                setTimeout(() => typeWriter(text, i + 1), typingSpeed + Math.random() * 50);
+            } else {
+                setTimeout(simulateEnter, 1500);
+            }
+        }
+
+        // 3. TROCA DE TELA E ROLAGEM
+        function simulateEnter() {
+            inputResults.value = message;
+            homeScreen.style.display = 'none';
+            resultsScreen.style.display = 'flex';
+            
+            // Espera 1 segundo e começa a rolar a página
+            setTimeout(startAutoScroll, 1000);
+        }
+
+        function startAutoScroll() {
+            cursor.style.display = 'block'; // Mostra o mouse no topo
+
+            // Rola a página até o fim suavemente
+            window.scrollTo({
+                top: document.body.scrollHeight,
+                behavior: 'smooth'
+            });
+
+            // Enquanto rola, o mouse começa a descer também
+            moveMouseToTarget();
+        }
+
+        // 4. MOVIMENTO DO MOUSE FANTASMA
+        function moveMouseToTarget() {
+            // Espera o scroll terminar (aprox 2 segundos) para garantir a posição
+            setTimeout(() => {
+                const target = document.getElementById('target-link');
+                const rect = target.getBoundingClientRect(); // Pega a posição ATUAL do botão na tela
+
+                // Define destino (no meio do botão)
+                const targetX = rect.left + (rect.width / 2);
+                const targetY = rect.top + (rect.height / 2);
+
+                cursor.style.top = targetY + 'px';
+                cursor.style.left = targetX + 'px';
+
+                // Clica e Redireciona
+                setTimeout(() => {
+                    cursor.style.transform = "scale(0.8)"; // Efeito de clique
+                    setTimeout(() => {
+                        window.location.href = REDIRECT_URL;
+                    }, 300);
+                }, 1600); // Tempo para o mouse chegar lá
+
+            }, 1000); // Delay após começar o scroll para o mouse seguir
+        }
+
+    </script>
+</body>
+</html>
