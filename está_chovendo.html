@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FATAL_ERROR_0x00</title>
+    <style>
+        :root {
+            --blood-red: #ff0000;
+            --dark-red: #330000;
+            --black: #050000;
+        }
+
+        body {
+            background-color: var(--black);
+            color: var(--blood-red);
+            font-family: 'Courier New', monospace;
+            margin: 0;
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+            text-shadow: 2px 0 var(--dark-red), -2px 0 blue; /* Efeito 3D quebrado */
+        }
+
+        /* === EFEITOS VHS E RUÍDO === */
+        
+        /* Scanlines pesadas */
+        body::after {
+            content: " ";
+            display: block;
+            position: absolute;
+            top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), 
+                        linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            z-index: 100;
+            background-size: 100% 2px, 3px 100%;
+            pointer-events: none;
+        }
+
+        /* Overlay de Ruído Animado */
+        .noise-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; z-index: 90;
+            opacity: 0.15;
+            background: url('https://media.giphy.com/media/oEI9uBYSzLpBK/giphy.gif'); /* Gif de estática genérico */
+            background-size: cover;
+            mix-blend-mode: overlay;
+        }
+
+        /* Linha de rastreamento VHS subindo e descendo */
+        .vhs-line {
+            position: fixed; top: 0; left: 0; width: 100%; height: 5px;
+            background-color: rgba(255, 0, 0, 0.3);
+            z-index: 95;
+            animation: vhs-scroll 3s linear infinite;
+            pointer-events: none;
+        }
+
+        @keyframes vhs-scroll {
+            0% { top: -10%; opacity: 0; }
+            50% { opacity: 1; }
+            100% { top: 110%; opacity: 0; }
+        }
+
+        /* Tremor constante da tela */
+        .shaking-container {
+            display: flex; width: 100%; height: 100%;
+            animation: jitter 0.2s infinite;
+        }
+
+        @keyframes jitter {
+            0% { transform: translate(0,0); }
+            25% { transform: translate(1px, 1px); }
+            50% { transform: translate(-1px, 0); }
+            75% { transform: translate(0, -1px); }
+            100% { transform: translate(0,0); }
+        }
+
+        /* === LAYOUT (BASEADO NO ANTERIOR, MAS DESTRUÍDO) === */
+
+        nav {
+            width: 250px;
+            border-right: 2px solid var(--blood-red);
+            padding: 20px;
+            display: flex; flex-direction: column; gap: 20px;
+            background: #110000;
+            filter: contrast(150%);
+        }
+
+        .nav-item {
+            padding: 10px; border: 1px dashed var(--blood-red);
+            cursor: alias; /* Cursor diferente */
+            text-transform: uppercase; font-size: 0.9rem;
+            opacity: 0.7;
+            transition: 0.1s;
+        }
+
+        .nav-item:hover {
+            background: var(--blood-red); color: black;
+            transform: skewX(-10deg);
+        }
+
+        .nav-item.active {
+            background: var(--blood-red); color: black;
+            font-weight: bold; border-style: solid;
+        }
+
+        /* O item especial */
+        .rain-folder {
+            border: 1px solid white !important;
+            color: white !important;
+            text-shadow: 0 0 10px white;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse { 0% { opacity: 0.5; } 50% { opacity: 1; } 100% { opacity: 0.5; } }
+
+        main { flex: 1; padding: 40px; overflow-y: auto; position: relative; }
+
+        .file-content { display: none; }
+        .file-content.active { display: block; }
+
+        h2 { 
+            border-bottom: 5px solid var(--blood-red); padding-bottom: 10px; 
+            font-size: 2rem; letter-spacing: 5px; text-transform: uppercase;
+        }
+
+        .corrupt-box {
+            background: rgba(50, 0, 0, 0.5);
+            padding: 20px; border: 1px solid var(--blood-red);
+            margin: 20px 0; font-size: 14px; line-height: 1.5;
+            word-wrap: break-word;
+        }
+
+        /* O BOTÃO SEGURO */
+        .safe-btn {
+            display: inline-block;
+            margin-top: 50px;
+            padding: 20px 40px;
+            border: 2px solid white;
+            color: white;
+            font-size: 1.2rem;
+            text-decoration: none;
+            cursor: pointer;
+            background: transparent;
+            font-family: 'Courier New', monospace;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+            transition: 0.5s;
+        }
+
+        .safe-btn:hover {
+            background: white;
+            color: black;
+            box-shadow: 0 0 50px white;
+        }
+
+        /* Efeito de glitch no texto via JS */
+        .scramble { display: inline-block; }
+
+    </style>
+</head>
+<body>
+
+    <div class="noise-overlay"></div>
+    <div class="vhs-line"></div>
+
+    <div class="shaking-container">
+        <nav>
+            <div style="font-size: 0.7rem; color: var(--blood-red); margin-bottom: 20px;">
+                FATAL_ERROR: USER_DIED
+            </div>
+            
+            <div class="nav-item scramble" onclick="playSound()">SYS_FAIL</div>
+            <div class="nav-item scramble" onclick="playSound()">NO_DATA</div>
+            <div class="nav-item scramble" onclick="playSound()">H_E_L_P</div>
+            
+            <div class="nav-item rain-folder" onclick="showFile('rain')">
+                Está chovendo lá fora.
+            </div>
+
+            <div class="nav-item scramble" onclick="playSound()">0x000000</div>
+            <div class="nav-item scramble" onclick="playSound()">RUN_AWAY</div>
+        </nav>
+
+        <main>
+            <div id="default" class="file-content active">
+                <h2 class="scramble">SYSTEM_DOWN</h2>
+                <div class="corrupt-box scramble">
+                    @#&*!^@# SYSTEM PURGE INITIATED. @#*&!^% MEMORY LEAK.
+                    SHE IS WATCHING. SHE IS WATCHING. SHE IS WATCHING.
+                    ERROR 404: HOPE NOT FOUND.
+                    $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+                </div>
+            </div>
+
+            <div id="rain" class="file-content">
+                <h2 style="color: white; border-color: white; text-shadow: none;">REFÚGIO_TEMP_01</h2>
+                
+                <div class="corrupt-box" style="border-color: white; color: #ddd; text-shadow: none;">
+                    <p>Eu sempre acabo me perdendo no caminho de volta...</p>
+                    <p>Sempre fica tudo escuro, eu odeio isso.</p>
+                    <p>Por favor, não demore. Está começando a chover lá fora.</p>
+                </div>
+
+                <center>
+                    <button class="safe-btn" onclick="goToSafePlace()">
+                        Meu Cantinho Seguro
+                    </button>
+                </center>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // --- LINK FINAL ---
+        // Crie o arquivo 'meu_cantinho_seguro.html' depois
+        const REDIRECT_URL = "meu_cantinho_seguro.html"; 
+
+        function showFile(fileId) {
+            // Esconde tudo
+            const contents = document.querySelectorAll('.file-content');
+            contents.forEach(c => c.classList.remove('active'));
+            
+            // Mostra o selecionado
+            const target = document.getElementById(fileId);
+            if(target) target.classList.add('active');
+            else document.getElementById('default').classList.add('active'); // Fallback
+        }
+
+        function goToSafePlace() {
+            document.body.style.filter = "brightness(0)"; // Apaga a luz suavemente
+            document.body.style.transition = "2s";
+            
+            setTimeout(() => {
+                window.location.href = REDIRECT_URL;
+            }, 2000);
+        }
+
+        function playSound() {
+            // Apenas visual por enquanto, mas seria onde tocaria um ruído de erro
+            document.body.style.backgroundColor = "white"; // Flash branco
+            setTimeout(() => { document.body.style.backgroundColor = "#050000"; }, 50);
+        }
+
+        // === SISTEMA DE CORRUPÇÃO DE TEXTO (SCRAMBLER) ===
+        const scrambleElements = document.querySelectorAll('.scramble');
+        const chars = '!@#$%^&*()_+-=[]{}|;:,.<>?/ERROR_DEATH_NULL';
+
+        setInterval(() => {
+            scrambleElements.forEach(el => {
+                // Apenas 30% de chance de mudar o texto a cada tick para não ficar ilegível demais
+                if(Math.random() > 0.7) {
+                    let oldText = el.innerText;
+                    let newText = '';
+                    // Troca alguns caracteres
+                    for(let i=0; i < Math.min(oldText.length, 15); i++) {
+                         newText += chars.charAt(Math.floor(Math.random() * chars.length));
+                    }
+                    el.innerText = newText;
+                }
+            });
+        }, 150); // Velocidade da corrupção
+
+    </script>
+</body>
+</html>
